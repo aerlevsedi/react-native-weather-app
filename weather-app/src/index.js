@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-const openWeatherKey = '0f9e4326196f24163f84592ae32807b1';
+const openWeatherKey = '';
 let url =
 	'http://api.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}';
 
