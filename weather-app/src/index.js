@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-const openWeatherKey = '';
+const openWeatherKey = ``;
 let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
 
 const Weather = () => {
@@ -81,13 +81,13 @@ const Weather = () => {
 				<Text style={styles.title}>Current Weather</Text>
 
 				<Text style={{ alignItems: 'center', textAlign: 'center' }}>
-					Your Location
+					Your Location: {forecast.name}
 				</Text>
 				<View style={styles.current}>
 					<Image
 						style={styles.largeIcon}
 						source={{
-							uri: 'http://openweathermap.org/img/wn/${current.icon}@4x.png',
+							uri: `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@4x.png`,
 						}}
 					/>
 					<Text style={styles.currentTemp}>
