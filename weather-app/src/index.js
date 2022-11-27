@@ -7,13 +7,13 @@ import {
 	ScrollView,
 	StyleSheet,
 	RefreshControl,
+	Image,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
 const openWeatherKey = '';
-let url =
-	'http://api.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}';
+let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
 
 const Weather = () => {
 	const [forecast, setForecast] = useState(null);
@@ -24,34 +24,23 @@ const Weather = () => {
 
 		const { status } = await Location.requestPermissionsAsync();
 
-		console.log('Here 1');
-
 		if (status !== 'granted') {
 			Alert.alert('Permission to access location was denied.');
 		}
-
-		console.log('Here 2');
 
 		let location = await Location.getCurrentPositionAsync({
 			enableHighAccuracy: true,
 		});
 
-		console.log(location);
-
-		console.log('Here 3');
+		console.log('LOCATION: ' + JSON.stringify(location));
 
 		const response = await fetch(
-			url +
-				'&lat=' +
-				location.coords.latitude +
-				'&lon=' +
-				location.coords.longitude
+			`${url}&lat=${location.coords.latitude}&lon=${location.coords.longitude}`
 		);
 
-		console.log('Here 4');
-
 		const data = await response.json();
-		console.log('Here 5');
+
+		console.log('RESPONSE: ' + JSON.stringify(data));
 
 		if (!response.ok) {
 			console.log(response);
@@ -59,7 +48,6 @@ const Weather = () => {
 		} else {
 			setForecast(data);
 		}
-		console.log('Here 6');
 		setRefreshing(false);
 	};
 
@@ -76,7 +64,9 @@ const Weather = () => {
 		);
 	}
 
-	const current = forecast.current.weather[0];
+	console.log('FORECAST: ' + JSON.stringify(forecast));
+
+	// const currentWeather = forecast.weather[0];
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -101,7 +91,7 @@ const Weather = () => {
 						}}
 					/>
 					<Text style={styles.currentTemp}>
-						{Math.round(forecast.current.temp)}
+						Temperature: {Math.round(forecast.main.temp)} &#8451;
 					</Text>
 				</View>
 			</ScrollView>
