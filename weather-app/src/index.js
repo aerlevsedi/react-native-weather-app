@@ -20,7 +20,6 @@ let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&ap
 
 const Weather = () => {
 	const [forecast, setForecast] = useState(null);
-	const [forecast5days, setForecast5days] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
@@ -67,8 +66,6 @@ const Weather = () => {
 			console.log(response5days);
 			Alert.alert('Error', 'Something went wrong');
 		} else {
-			setForecast5days(data5days);
-
 			let days = Array(6);
 			for (var i = 0; i < days.length; i++) {
 				days[i] = new Array(0);
@@ -161,7 +158,7 @@ const Weather = () => {
 					<Text style={styles.subtitle}>Hourly Forecast</Text>
 				</View>
 
-				{forecast5DaysDivided?.map((days) => {
+				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
 							<Text style={styles.text}>{days[0].dt_txt.split(' ')[0]}</Text>
