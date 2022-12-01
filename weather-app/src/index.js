@@ -23,6 +23,13 @@ const Weather = () => {
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
+	const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+	function getDayOfWeek(date)  {
+		var day = date.getDay();
+		if(day == new Date().getDay()) return 'Today'
+		else return days[day]
+	}
 
 	const loadForecast = async () => {
 		setRefreshing(true);
@@ -161,7 +168,7 @@ const Weather = () => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>{days[0].dt_txt.split(' ')[0]}</Text>
+							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
 							<FlatList
 								horizontal
 								data={days}
@@ -172,9 +179,6 @@ const Weather = () => {
 									var dt = new Date(day.item.dt * 1000);
 									return (
 										<View style={styles.hours}>
-											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
-												{dt.toISOString().split('T')[0]}
-											</Text>
 											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
 												{dt.toISOString().split('T')[1].replace(':00.000Z', '')}
 											</Text>
