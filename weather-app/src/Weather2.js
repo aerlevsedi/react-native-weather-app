@@ -18,11 +18,8 @@ import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import {useNavigation} from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'; 
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
-let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
-let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
+import * as SecureStore from 'expo-secure-store';
+import { url, url5days } from '.';
 
 const Weather2 = ({route, navigation}) => {
 	navigation = useNavigation();
@@ -35,32 +32,52 @@ const Weather2 = ({route, navigation}) => {
 
 	const [searchPhrase, setSearchPhrase] = useState("");
 	const [clicked, setClicked] = useState(false);
-	const [fakeData, setFakeData] = useState();
 
 	const [favCities, setFavCities] = useState([]);
 	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
 
-
-	const updateFakeData = (value) => {
-		setFakeData(value);
-	}
 	useEffect(() => {
 		console.log({city});
 	}, [city]);
 
-	useEffect(() => {
-		console.log({fakeData});
-	}, [fakeData]);
 
 	useEffect(() => {
 		city.favourite = isFavouriteLocation;
 		console.log({city});
 
-		// if(city.favourite === true){
-		// 	storeData([... favCities, city]);
-		// }
+		const k = favCities
+		console.log({favCities});
+		setFavCities([...favCities, city]);
+		if(city.favourite === true){
+			save('cities', JSON.stringify(favCities));
+		}
+		const FAV = getValueFor('cities');
+		console.log({FAV});
 	}, [isFavouriteLocation]);
 
+
+	useEffect(() => {
+		favCities?._z?.forEach((city) => {
+			const placeName = city;
+			console.log({placeName});
+		});
+	}, [favCities]);
+
+	async function save(key, value) {
+		await SecureStore.setItemAsync(key, value);
+	  }
+	  
+	  async function getValueFor(key) {
+		let result = await SecureStore.getItemAsync(key);
+		if (result) {
+		  alert("🔐 Here's your value 🔐 \n" + result);
+		} else {
+		  alert('No values stored under that key.');
+		}
+		return JSON.parse(result);
+		// return response;
+	  }
+	  
 
 	// const storeData = async (value) => {
 	// 	try {
@@ -152,8 +169,11 @@ const Weather2 = ({route, navigation}) => {
 	};
 
 	useEffect(() => {
-		// setFavCities(getData());
-		// console.log({favCities});
+		if(getValueFor('cities')){
+			setFavCities([getValueFor('cities')]);
+		}
+
+		console.log({favCities});
 		loadForecast();
 	}, []);
 
@@ -172,25 +192,6 @@ const Weather2 = ({route, navigation}) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			{/* <SafeAreaView style={styles.root}>
-					{!clicked}
-					<SearchBar
-						searchPhrase={searchPhrase}
-						setSearchPhrase={setSearchPhrase}
-						clicked={clicked}
-						setClicked={setClicked}
-						updateFakeData={updateFakeData}
-					/>
-					 
-					
-					{ clicked && 
-						<List
-							searchPhrase={searchPhrase}
-							data={fakeData}
-							setClicked={setClicked}
-						/> 
-					}
-					</SafeAreaView> */}
 
 			<ScrollView
 				refreshControl={

@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TextInput, View, Keyboard, Button } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
+import { openWeatherKey } from ".";
 
-export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
 let url = `http://api.openweathermap.org/geo/1.0/direct`;
 let mapBoxKey = `pk.eyJ1Ijoia2Fyb2xpbmE2MDYiLCJhIjoiY2xiM3Z5Mzk4MDRkNDN2cXNzOGhoZzZ1bCJ9.KT8tsfa44s4GqWUnfeu42Q`;
-const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked, updateFakeData}) => {
+const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked, updateCities}) => {
   var [hitol1, setHitol] = useState({});
 
   const searchForCities = async () => {
@@ -40,7 +40,7 @@ const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked, updateFa
 
   useEffect(() => {
     console.log({hitol1});
-    updateFakeData(hitol1);
+    updateCities(hitol1);
   }, [hitol1]);
 
   useEffect(() => {

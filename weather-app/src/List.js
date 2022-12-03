@@ -28,22 +28,6 @@ const List = ({ searchPhrase, setClicked, data, navigation }) => {
 
     navigation = useNavigation();
 
-    const renderItem = ({ item }) => {
-    console.log({item});
-    // when no input, show all
-    // if (searchPhrase === "") {
-    //   return <Item text={item.text} details={item.place_name} onClick={e => {setChoosen(e)}} />;
-    // }
-    // // filter of the name
-    // if (item.text.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
-    //   return <Item text={item.text} details={item.place_name} onClick={e => {setChoosen(e)}} />;
-    // }
-    // // filter of the description
-    // if (item.place_name.toUpperCase().includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))) {
-    //   return <Item text={item.text} details={item.place_name} onClick={e => {setChoosen(e)}} />;
-    // }
-  };
-
   useEffect(() => {
     console.log({choosen});
   }, [choosen]);
@@ -64,14 +48,7 @@ const List = ({ searchPhrase, setClicked, data, navigation }) => {
           setClicked(false);
         }}
       >
-        {/* <Text>hello</Text> */}
-        {/* <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        /> */}
         {dataToRender?.map((item) => {
-            // return renderItem(item);
             return  <Pressable style={styles.item} 
                         onPress={() =>
                         navigation.navigate('Weather2', {
@@ -80,9 +57,6 @@ const List = ({ searchPhrase, setClicked, data, navigation }) => {
                         <Text style={styles.title}>{item.text}</Text>
                         <Text>{item.place_name}</Text>
                     </Pressable>
-            
-            // return <Text>{item.text}</Text>
-            // return 
         })}
 
       </View>

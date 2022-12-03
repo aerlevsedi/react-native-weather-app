@@ -16,15 +16,12 @@ import List from './List';
 
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
-import {useNavigation} from '@react-navigation/native';
 
 export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
-let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
-let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
+export let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
+export let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
 
 const Weather = () => {
-	// navigation = useNavigation();
-	// const {city} = route.params;
 	
 	const [forecast, setForecast] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
@@ -33,11 +30,11 @@ const Weather = () => {
 
 	const [searchPhrase, setSearchPhrase] = useState("");
 	const [clicked, setClicked] = useState(false);
-	const [fakeData, setFakeData] = useState();
+	const [cities, setCities] = useState();
 
 
-	const updateFakeData = (value) => {
-		setFakeData(value);
+	const updateCities = (value) => {
+		setCities(value);
 	}
 
 	// useEffect(() => {
@@ -93,7 +90,6 @@ const Weather = () => {
 
 		const data = await response.json();
 		const data5days = await response5days.json();
-		const k = data5days.list[0].weather;
 
 		console.log('RESPONSE: ' + JSON.stringify(data));
 		console.log({ data5days });
@@ -160,14 +156,14 @@ const Weather = () => {
 						setSearchPhrase={setSearchPhrase}
 						clicked={clicked}
 						setClicked={setClicked}
-						updateFakeData={updateFakeData}
+						updateCities={updateCities}
 					/>
 					 
 					
 					{ clicked && 
 						<List
 							searchPhrase={searchPhrase}
-							data={fakeData}
+							data={cities}
 							setClicked={setClicked}
 						/> 
 					}
