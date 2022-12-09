@@ -16,74 +16,104 @@ import List from './List';
 
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
+import {useNavigation} from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons'; 
+import * as SecureStore from 'expo-secure-store';
+import { url, url5days } from '.';
 
-export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
-export let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
-export let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
+const Weather2 = ({route, navigation}) => {
+	navigation = useNavigation();
+	const {city} = route.params;
 
-const Weather = () => {
-	
 	const [forecast, setForecast] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
-	const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-	function getDayOfWeek(date)  {
-		var day = date.getDay();
-		if(day == new Date().getDay()) return 'Today'
-		else return days[day]
-	}
 
 	const [searchPhrase, setSearchPhrase] = useState("");
 	const [clicked, setClicked] = useState(false);
-	const [cities, setCities] = useState();
+
+	const [favCities, setFavCities] = useState([]);
+	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
+
+	useEffect(() => {
+		console.log({city});
+	}, [city]);
 
 
-	const updateCities = (value) => {
-		setCities(value);
-	}
+	useEffect(() => {
+		city.favourite = isFavouriteLocation;
+		console.log({city});
 
-	// useEffect(() => {
-	// 	console.log({fakeData});
-	// }, [city]);
+		const k = favCities
+		console.log({favCities});
+		setFavCities([...favCities, city]);
+		if(city.favourite === true){
+			save('cities', JSON.stringify(favCities));
+		}
+		const FAV = getValueFor('cities');
+		console.log({FAV});
+	}, [isFavouriteLocation]);
 
-	// get data from the fake api endpoint
-	// useEffect(() => {
-	// 	const getData = async () => {
-	// 		const apiResponse = await fetch(
-	// 			"https://my-json-server.typicode.com/kevintomas1995/logRocket_searchBar/languages"
-	// 		);
-	// 		const data = await apiResponse.json();
-	// 		setFakeData(data);
-	// 	};
-	// 	getData();
-	// 	console.log({fakeData});
-	// }, []);
+
+	useEffect(() => {
+		favCities?._z?.forEach((city) => {
+			const placeName = city;
+			console.log({placeName});
+		});
+	}, [favCities]);
+
+	async function save(key, value) {
+		await SecureStore.setItemAsync(key, value);
+	  }
+	  
+	  async function getValueFor(key) {
+		let result = await SecureStore.getItemAsync(key);
+		if (result) {
+		  alert("🔐 Here's your value 🔐 \n" + result);
+		} else {
+		  alert('No values stored under that key.');
+		}
+		return JSON.parse(result);
+		// return response;
+	  }
+	  
+
+	// const storeData = async (value) => {
+	// 	try {
+	// 	  const jsonValue = JSON.stringify(value)
+	// 	  await AsyncStorage.setItem('cities', jsonValue)
+	// 	} catch (e) {
+	// 	  // saving error
+	// 	}
+	//   }
+
+	//   const getData = async () => {
+	// 	try {
+	// 	  const jsonValue = await AsyncStorage.getItem('cities')
+	// 	  return jsonValue != null ? JSON.parse(jsonValue) : null;
+	// 	} catch(e) {
+	// 	  // error reading value
+	// 	}
+	//   }
 
 	const loadForecast = async () => {
 		setRefreshing(true);
-		let location = null;
-		// if (city === undefined){
-			const { status } = await Location.requestForegroundPermissionsAsync();
 
-			if (status !== 'granted') {
-				Alert.alert('Permission to access location was denied.');
+		console.log({city});
+		city.favourite = false;
+
+		if (city.favourite !== undefined){
+			setIsFavouriteLocation(city.favourite);
+		}
+
+		console.log({city});
+		const location = {
+				'coords': {
+					'latitude': city.center[1],
+					'longitude': city.center[0]
+				}
 			}
-
-			location = await Location.getCurrentPositionAsync({
-				enableHighAccuracy: true,
-			});
-			// console.log({city})
-		// }else{
-		// 	// console.log({city})
-		// 	location = {
-		// 		'coords': {
-		// 			'latitude': city.center[0],
-		// 			'longitude': city.center[1]
-		// 		}
-		// 	}
-		// }
 
 		console.log('LOCATION: ' + JSON.stringify(location));
 
@@ -97,6 +127,7 @@ const Weather = () => {
 
 		const data = await response.json();
 		const data5days = await response5days.json();
+		const k = data5days.list[0].weather;
 
 		console.log('RESPONSE: ' + JSON.stringify(data));
 		console.log({ data5days });
@@ -138,6 +169,11 @@ const Weather = () => {
 	};
 
 	useEffect(() => {
+		if(getValueFor('cities')){
+			setFavCities([getValueFor('cities')]);
+		}
+
+		console.log({favCities});
 		loadForecast();
 	}, []);
 
@@ -156,25 +192,6 @@ const Weather = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<SafeAreaView style={styles.root}>
-					{!clicked}
-					<SearchBar
-						searchPhrase={searchPhrase}
-						setSearchPhrase={setSearchPhrase}
-						clicked={clicked}
-						setClicked={setClicked}
-						updateCities={updateCities}
-					/>
-					 
-					
-					{ clicked && 
-						<List
-							searchPhrase={searchPhrase}
-							data={cities}
-							setClicked={setClicked}
-						/> 
-					}
-					</SafeAreaView>
 
 			<ScrollView
 				refreshControl={
@@ -187,7 +204,15 @@ const Weather = () => {
 
 				<Text style={styles.title}>Current Weather</Text>
 
-				<Text style={styles.text}>Your Location: {forecast.name}</Text>
+				<Text style={styles.text}>Location: {forecast.name}
+					{
+						isFavouriteLocation ?
+						<AntDesign style={styles.icon} name="heart" size={24} color="black" onPress={e => setIsFavouriteLocation(false)}/>
+						:
+						<AntDesign style={styles.icon} name="hearto" size={24} color="black" onPress={e => setIsFavouriteLocation(true)}/>
+					}
+				</Text>
+				
 				<View style={styles.current}>
 					<Image
 						style={styles.largeIcon}
@@ -229,7 +254,7 @@ const Weather = () => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
+							<Text style={styles.text}>{days[0].dt_txt.split(' ')[0]}</Text>
 							<FlatList
 								horizontal
 								data={days}
@@ -240,6 +265,9 @@ const Weather = () => {
 									var dt = new Date(day.item.dt * 1000);
 									return (
 										<View style={styles.hours}>
+											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
+												{dt.toISOString().split('T')[0]}
+											</Text>
 											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
 												{dt.toISOString().split('T')[1].replace(':00.000Z', '')}
 											</Text>
@@ -267,7 +295,7 @@ const Weather = () => {
 	);
 };
 
-export default Weather;
+export default Weather2;
 
 const styles = StyleSheet.create({
 	root: {
@@ -346,4 +374,7 @@ const styles = StyleSheet.create({
 		width: 100,
 		height: 100,
 	},
+	icon: {
+		marginVertical: 20,
+	}
 });
