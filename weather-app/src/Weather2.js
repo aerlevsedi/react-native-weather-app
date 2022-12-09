@@ -16,104 +16,78 @@ import List from './List';
 
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
-import {useNavigation} from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import { url, url5days } from '.';
 
-const Weather2 = ({route, navigation}) => {
+const Weather2 = ({ route, navigation }) => {
 	navigation = useNavigation();
-	const {city} = route.params;
+	const { city } = route.params;
 
 	const [forecast, setForecast] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
 
-	const [searchPhrase, setSearchPhrase] = useState("");
+	const [searchPhrase, setSearchPhrase] = useState('');
 	const [clicked, setClicked] = useState(false);
 
 	const [favCities, setFavCities] = useState([]);
 	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
 
 	useEffect(() => {
-		console.log({city});
+		console.log({ city });
 	}, [city]);
-
 
 	useEffect(() => {
 		city.favourite = isFavouriteLocation;
-		console.log({city});
+		console.log({ city });
 
-		const k = favCities
-		console.log({favCities});
+		const k = favCities;
+		console.log({ favCities });
 		setFavCities([...favCities, city]);
-		if(city.favourite === true){
+		if (city.favourite === true) {
 			save('cities', JSON.stringify(favCities));
 		}
 		const FAV = getValueFor('cities');
-		console.log({FAV});
+		console.log({ FAV });
 	}, [isFavouriteLocation]);
-
 
 	useEffect(() => {
 		favCities?._z?.forEach((city) => {
 			const placeName = city;
-			console.log({placeName});
+			console.log({ placeName });
 		});
 	}, [favCities]);
 
 	async function save(key, value) {
 		await SecureStore.setItemAsync(key, value);
-	  }
-	  
-	  async function getValueFor(key) {
+	}
+
+	async function getValueFor(key) {
 		let result = await SecureStore.getItemAsync(key);
-		if (result) {
-		  alert("🔐 Here's your value 🔐 \n" + result);
-		} else {
-		  alert('No values stored under that key.');
-		}
+
 		return JSON.parse(result);
-		// return response;
-	  }
-	  
-
-	// const storeData = async (value) => {
-	// 	try {
-	// 	  const jsonValue = JSON.stringify(value)
-	// 	  await AsyncStorage.setItem('cities', jsonValue)
-	// 	} catch (e) {
-	// 	  // saving error
-	// 	}
-	//   }
-
-	//   const getData = async () => {
-	// 	try {
-	// 	  const jsonValue = await AsyncStorage.getItem('cities')
-	// 	  return jsonValue != null ? JSON.parse(jsonValue) : null;
-	// 	} catch(e) {
-	// 	  // error reading value
-	// 	}
-	//   }
+	}
 
 	const loadForecast = async () => {
 		setRefreshing(true);
 
-		console.log({city});
+		console.log({ city });
 		city.favourite = false;
 
-		if (city.favourite !== undefined){
+		if (city.favourite !== undefined) {
 			setIsFavouriteLocation(city.favourite);
 		}
 
-		console.log({city});
+		console.log({ city });
 		const location = {
-				'coords': {
-					'latitude': city.center[1],
-					'longitude': city.center[0]
-				}
-			}
+			coords: {
+				latitude: city.center[1],
+				longitude: city.center[0],
+			},
+		};
 
 		console.log('LOCATION: ' + JSON.stringify(location));
 
@@ -169,11 +143,11 @@ const Weather2 = ({route, navigation}) => {
 	};
 
 	useEffect(() => {
-		if(getValueFor('cities')){
+		if (getValueFor('cities')) {
 			setFavCities([getValueFor('cities')]);
 		}
 
-		console.log({favCities});
+		console.log({ favCities });
 		loadForecast();
 	}, []);
 
@@ -192,7 +166,6 @@ const Weather2 = ({route, navigation}) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-
 			<ScrollView
 				refreshControl={
 					<RefreshControl
@@ -201,18 +174,29 @@ const Weather2 = ({route, navigation}) => {
 					/>
 				}
 			>
-
 				<Text style={styles.title}>Current Weather</Text>
 
-				<Text style={styles.text}>Location: {forecast.name}
-					{
-						isFavouriteLocation ?
-						<AntDesign style={styles.icon} name="heart" size={24} color="black" onPress={e => setIsFavouriteLocation(false)}/>
-						:
-						<AntDesign style={styles.icon} name="hearto" size={24} color="black" onPress={e => setIsFavouriteLocation(true)}/>
-					}
+				<Text style={styles.text}>
+					Location: {forecast.name}
+					{isFavouriteLocation ? (
+						<AntDesign
+							style={styles.icon}
+							name='heart'
+							size={24}
+							color='black'
+							onPress={(e) => setIsFavouriteLocation(false)}
+						/>
+					) : (
+						<AntDesign
+							style={styles.icon}
+							name='hearto'
+							size={24}
+							color='black'
+							onPress={(e) => setIsFavouriteLocation(true)}
+						/>
+					)}
 				</Text>
-				
+
 				<View style={styles.current}>
 					<Image
 						style={styles.largeIcon}
@@ -299,8 +283,8 @@ export default Weather2;
 
 const styles = StyleSheet.create({
 	root: {
-		justifyContent: "center",
-		alignItems: "center",
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	container: {
 		flex: 1,
@@ -376,5 +360,5 @@ const styles = StyleSheet.create({
 	},
 	icon: {
 		marginVertical: 20,
-	}
+	},
 });

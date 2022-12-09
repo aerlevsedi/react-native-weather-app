@@ -22,68 +22,47 @@ export let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&a
 export let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
 
 const Weather = () => {
-	
 	const [forecast, setForecast] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
-	const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+	const days = [
+		'Sunday',
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+	];
 
-	function getDayOfWeek(date)  {
+	function getDayOfWeek(date) {
 		var day = date.getDay();
-		if(day == new Date().getDay()) return 'Today'
-		else return days[day]
+		if (day == new Date().getDay()) return 'Today';
+		else return days[day];
 	}
 
-	const [searchPhrase, setSearchPhrase] = useState("");
+	const [searchPhrase, setSearchPhrase] = useState('');
 	const [clicked, setClicked] = useState(false);
 	const [cities, setCities] = useState();
 
-
 	const updateCities = (value) => {
 		setCities(value);
-	}
-
-	// useEffect(() => {
-	// 	console.log({fakeData});
-	// }, [city]);
-
-	// get data from the fake api endpoint
-	// useEffect(() => {
-	// 	const getData = async () => {
-	// 		const apiResponse = await fetch(
-	// 			"https://my-json-server.typicode.com/kevintomas1995/logRocket_searchBar/languages"
-	// 		);
-	// 		const data = await apiResponse.json();
-	// 		setFakeData(data);
-	// 	};
-	// 	getData();
-	// 	console.log({fakeData});
-	// }, []);
+	};
 
 	const loadForecast = async () => {
 		setRefreshing(true);
 		let location = null;
-		// if (city === undefined){
-			const { status } = await Location.requestForegroundPermissionsAsync();
 
-			if (status !== 'granted') {
-				Alert.alert('Permission to access location was denied.');
-			}
+		const { status } = await Location.requestForegroundPermissionsAsync();
 
-			location = await Location.getCurrentPositionAsync({
-				enableHighAccuracy: true,
-			});
-			// console.log({city})
-		// }else{
-		// 	// console.log({city})
-		// 	location = {
-		// 		'coords': {
-		// 			'latitude': city.center[0],
-		// 			'longitude': city.center[1]
-		// 		}
-		// 	}
-		// }
+		if (status !== 'granted') {
+			Alert.alert('Permission to access location was denied.');
+		}
+
+		location = await Location.getCurrentPositionAsync({
+			enableHighAccuracy: true,
+		});
 
 		console.log('LOCATION: ' + JSON.stringify(location));
 
@@ -157,24 +136,23 @@ const Weather = () => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<SafeAreaView style={styles.root}>
-					{!clicked}
-					<SearchBar
+				{!clicked}
+				<SearchBar
+					searchPhrase={searchPhrase}
+					setSearchPhrase={setSearchPhrase}
+					clicked={clicked}
+					setClicked={setClicked}
+					updateCities={updateCities}
+				/>
+
+				{clicked && (
+					<List
 						searchPhrase={searchPhrase}
-						setSearchPhrase={setSearchPhrase}
-						clicked={clicked}
+						data={cities}
 						setClicked={setClicked}
-						updateCities={updateCities}
 					/>
-					 
-					
-					{ clicked && 
-						<List
-							searchPhrase={searchPhrase}
-							data={cities}
-							setClicked={setClicked}
-						/> 
-					}
-					</SafeAreaView>
+				)}
+			</SafeAreaView>
 
 			<ScrollView
 				refreshControl={
@@ -184,7 +162,6 @@ const Weather = () => {
 					/>
 				}
 			>
-
 				<Text style={styles.title}>Current Weather</Text>
 
 				<Text style={styles.text}>Your Location: {forecast.name}</Text>
@@ -229,7 +206,9 @@ const Weather = () => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
+							<Text style={styles.text}>
+								{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}
+							</Text>
 							<FlatList
 								horizontal
 								data={days}
@@ -271,8 +250,8 @@ export default Weather;
 
 const styles = StyleSheet.create({
 	root: {
-		justifyContent: "center",
-		alignItems: "center",
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	container: {
 		flex: 1,
