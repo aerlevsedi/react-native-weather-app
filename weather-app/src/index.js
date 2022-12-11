@@ -11,48 +11,28 @@ import {
 	Dimensions,
 	FlatList,
 } from 'react-native';
-import SearchBar from './SearchBar';
-import List from './List';
-
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
-export let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
-export let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
+const openWeatherKey = `01eb218c1c36ecb20bfce9572410dffb`;
+let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
+let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
 
-const Weather = () => {
+const LocalWeather = () => {
 	const [forecast, setForecast] = useState(null);
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
-	const days = [
-		'Sunday',
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-	];
+	const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-	function getDayOfWeek(date) {
+	function getDayOfWeek(date)  {
 		var day = date.getDay();
-		if (day == new Date().getDay()) return 'Today';
-		else return days[day];
+		if(day == new Date().getDay()) return 'Today'
+		else return days[day]
 	}
-
-	const [searchPhrase, setSearchPhrase] = useState('');
-	const [clicked, setClicked] = useState(false);
-	const [cities, setCities] = useState();
-
-	const updateCities = (value) => {
-		setCities(value);
-	};
 
 	const loadForecast = async () => {
 		setRefreshing(true);
-		let location = null;
 
 		const { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -60,7 +40,7 @@ const Weather = () => {
 			Alert.alert('Permission to access location was denied.');
 		}
 
-		location = await Location.getCurrentPositionAsync({
+		let location = await Location.getCurrentPositionAsync({
 			enableHighAccuracy: true,
 		});
 
@@ -76,6 +56,7 @@ const Weather = () => {
 
 		const data = await response.json();
 		const data5days = await response5days.json();
+		const k = data5days.list[0].weather;
 
 		console.log('RESPONSE: ' + JSON.stringify(data));
 		console.log({ data5days });
@@ -135,25 +116,6 @@ const Weather = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<SafeAreaView style={styles.root}>
-				{!clicked}
-				<SearchBar
-					searchPhrase={searchPhrase}
-					setSearchPhrase={setSearchPhrase}
-					clicked={clicked}
-					setClicked={setClicked}
-					updateCities={updateCities}
-				/>
-
-				{clicked && (
-					<List
-						searchPhrase={searchPhrase}
-						data={cities}
-						setClicked={setClicked}
-					/>
-				)}
-			</SafeAreaView>
-
 			<ScrollView
 				refreshControl={
 					<RefreshControl
@@ -206,9 +168,7 @@ const Weather = () => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>
-								{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}
-							</Text>
+							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
 							<FlatList
 								horizontal
 								data={days}
@@ -246,16 +206,13 @@ const Weather = () => {
 	);
 };
 
-export default Weather;
+export default LocalWeather;
 
 const styles = StyleSheet.create({
-	root: {
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
 	container: {
 		flex: 1,
 		backgroundColor: '#ECDBBA',
+		paddingTop: 40,
 	},
 	dayContainer: {
 		flex: 1,
