@@ -266,9 +266,6 @@ const Weather2 = ({ route, navigation }) => {
 									return (
 										<View style={styles.hours}>
 											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
-												{dt.toISOString().split('T')[0]}
-											</Text>
-											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
 												{dt.toISOString().split('T')[1].replace(':00.000Z', '')}
 											</Text>
 											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
