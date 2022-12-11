@@ -12,45 +12,42 @@ import {useNavigation} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {Ionicons, MaterialIcons} from '@expo/vector-icons'
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
+const Tab = createBottomTabNavigator();
 
 const localName = 'Local Weather';
 const searchName = 'Search Weather';
 const favName = 'Favorites';
 
+const Stack = createNativeStackNavigator();
+function SearchStackScreen() {
+	return (
+		<Stack.Navigator>
+		 		<Stack.Screen
+					name="Weather"
+					component={Weather}
+					options={{
+					title: 'Weather',
+					headerTitleStyle: {
+						fontWeight: 'bold',
+					},
+					}}
+				/>
+				<Stack.Screen
+					name="Weather2"
+					component={Weather2}
+					options={{
+					title: 'Searched Weather',
+					headerTitleStyle: {
+						fontWeight: 'bold',
+					},
+					}}
+				/>
+			</Stack.Navigator>
+	);
+  }
 export default function App() {
 	return (
-		// <View style={styles.container}>
-		// 	<Weather />
-		// </View>
-
-		// <NavigationContainer>
-		// 	<Stack.Navigator>
-		// 		<Stack.Screen
-		// 			name="Weather"
-		// 			component={Weather}
-		// 			options={{
-		// 			title: 'Weather',
-		// 			headerTitleStyle: {
-		// 				fontWeight: 'bold',
-		// 			},
-		// 			}}
-		// 		/>
-		// 		<Stack.Screen
-		// 			name="Weather2"
-		// 			component={Weather2}
-		// 			options={{
-		// 			title: 'Searched Weather',
-		// 			headerTitleStyle: {
-		// 				fontWeight: 'bold',
-		// 			},
-		// 			}}
-		// 		/>
-		// 	</Stack.Navigator>
-		// </NavigationContainer>
-
 		<NavigationContainer>
 			<Tab.Navigator initialRouteName={localName}
         screenOptions={({route}) => ({
@@ -85,7 +82,7 @@ export default function App() {
 
         >
         <Tab.Screen name="Local Weather" component={LocalWeather} />
-		<Tab.Screen name="Search Weather" component={Weather} />
+		<Tab.Screen name="Search Weather" component={SearchStackScreen} />
         <Tab.Screen name="Favorites" component={Weather} />
       </Tab.Navigator>
 		</NavigationContainer>
