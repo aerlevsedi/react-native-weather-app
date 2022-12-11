@@ -36,6 +36,22 @@ const Weather2 = ({ route, navigation }) => {
 	const [favCities, setFavCities] = useState([]);
 	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
 
+	const weekDays = [
+		'Sunday',
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+	];
+
+	function getDayOfWeek(date) {
+		var day = date.getDay();
+		if (day == new Date().getDay()) return 'Today';
+		else return weekDays[day];
+	}
+
 	useEffect(() => {
 		console.log({ city });
 	}, [city]);
@@ -238,7 +254,7 @@ const Weather2 = ({ route, navigation }) => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>{days[0].dt_txt.split(' ')[0]}</Text>
+							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
 							<FlatList
 								horizontal
 								data={days}

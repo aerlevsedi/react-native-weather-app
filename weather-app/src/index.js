@@ -26,7 +26,7 @@ const Weather = () => {
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
-	const days = [
+	const weekDays = [
 		'Sunday',
 		'Monday',
 		'Tuesday',
@@ -39,7 +39,7 @@ const Weather = () => {
 	function getDayOfWeek(date) {
 		var day = date.getDay();
 		if (day == new Date().getDay()) return 'Today';
-		else return days[day];
+		else return weekDays[day];
 	}
 
 	const [searchPhrase, setSearchPhrase] = useState('');
