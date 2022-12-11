@@ -18,8 +18,8 @@ import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
 import { url, url5days } from '.';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Weather2 = ({ route, navigation }) => {
 	navigation = useNavigation();
@@ -34,7 +34,7 @@ const Weather2 = ({ route, navigation }) => {
 	const [clicked, setClicked] = useState(false);
 
 	const [favCities, setFavCities] = useState([]);
-	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
+	const [isFavouriteLocation, setIsFavouriteLocation] = useState();
 
 	const weekDays = [
 		'Sunday',
@@ -52,30 +52,65 @@ const Weather2 = ({ route, navigation }) => {
 		else return weekDays[day];
 	}
 
-	useEffect(() => {
-		console.log({ city });
-	}, [city]);
+	const changeFavStatus = (value) => {
+		setIsFavouriteLocation(value);
+		city.favourite = value;
+		console.log({value});
 
-	useEffect(() => {
-		city.favourite = isFavouriteLocation;
-		console.log({ city });
-
-		const k = favCities;
-		console.log({ favCities });
-		setFavCities([...favCities, city]);
-		if (city.favourite === true) {
-			save('cities', JSON.stringify(favCities));
+		if(city.favourite === true){
+			storeData(city);
+		}else{
+			removeValue(city.text);
 		}
-		const FAV = getValueFor('cities');
-		console.log({ FAV });
-	}, [isFavouriteLocation]);
 
-	useEffect(() => {
-		favCities?._z?.forEach((city) => {
-			const placeName = city;
-			console.log({ placeName });
+		getAllKeys().then(resp => {
+			setFavCities(resp);
+			console.log({ resp });
+		}).finally(e => {
+			console.log({ favCities });
 		});
-	}, [favCities]);
+	}
+
+
+	const storeData = async (value) => {
+		try {
+		  const jsonValue = JSON.stringify(value)
+		  await AsyncStorage.setItem(city.text, jsonValue)
+		} catch (e) {
+		  // saving error
+		}
+	  }
+
+
+	  const getData = async (key) => {
+		try {
+		  const jsonValue = await AsyncStorage.getItem(key);
+		  return jsonValue != null ? JSON.parse(jsonValue) : null;
+		} catch(e) {
+		  // error reading value
+		}
+	}
+
+	  const getAllKeys = async () => {
+		let keys = [];
+		try {
+		  keys = await AsyncStorage.getAllKeys();
+		  console.log({keys});
+		  return keys;
+		} catch(e) {
+		  // read key error
+		}
+	  }
+
+	  const removeValue = async (key) => {
+		try {
+		  await AsyncStorage.removeItem(key)
+		} catch(e) {
+		  // remove error
+		}
+	  
+		console.log('Done.')
+	  }
 
 	async function save(key, value) {
 		await SecureStore.setItemAsync(key, value);
@@ -89,13 +124,6 @@ const Weather2 = ({ route, navigation }) => {
 
 	const loadForecast = async () => {
 		setRefreshing(true);
-
-		console.log({ city });
-		city.favourite = false;
-
-		if (city.favourite !== undefined) {
-			setIsFavouriteLocation(city.favourite);
-		}
 
 		console.log({ city });
 		const location = {
@@ -159,12 +187,17 @@ const Weather2 = ({ route, navigation }) => {
 	};
 
 	useEffect(() => {
-		if (getValueFor('cities')) {
-			setFavCities([getValueFor('cities')]);
-		}
-
-		console.log({ favCities });
 		loadForecast();
+
+		getData(city.text).then(resp => {
+			console.log({resp});
+			if(resp !== null){
+				setIsFavouriteLocation(true);
+			}
+			else{
+				setIsFavouriteLocation(false);
+			}
+		});
 	}, []);
 
 	if (!forecast) {
@@ -200,7 +233,7 @@ const Weather2 = ({ route, navigation }) => {
 							name='heart'
 							size={24}
 							color='black'
-							onPress={(e) => setIsFavouriteLocation(false)}
+							onPress={(e) => changeFavStatus(false)}
 						/>
 					) : (
 						<AntDesign
@@ -208,7 +241,7 @@ const Weather2 = ({ route, navigation }) => {
 							name='hearto'
 							size={24}
 							color='black'
-							onPress={(e) => setIsFavouriteLocation(true)}
+							onPress={(e) => changeFavStatus(true)}
 						/>
 					)}
 				</Text>
