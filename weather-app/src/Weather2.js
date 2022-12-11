@@ -19,7 +19,7 @@ import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
-import { url, url5days } from '.';
+import { url, url5days } from './index2';
 
 const Weather2 = ({ route, navigation }) => {
 	navigation = useNavigation();
@@ -35,6 +35,22 @@ const Weather2 = ({ route, navigation }) => {
 
 	const [favCities, setFavCities] = useState([]);
 	const [isFavouriteLocation, setIsFavouriteLocation] = useState(false);
+
+	const weekDays = [
+		'Sunday',
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+	];
+
+	function getDayOfWeek(date) {
+		var day = date.getDay();
+		if (day == new Date().getDay()) return 'Today';
+		else return weekDays[day];
+	}
 
 	useEffect(() => {
 		console.log({ city });
@@ -238,7 +254,7 @@ const Weather2 = ({ route, navigation }) => {
 				{forecast5DaysDivided?.map((days, index) => {
 					return (
 						<View style={styles.dayContainer}>
-							<Text style={styles.text}>{days[0].dt_txt.split(' ')[0]}</Text>
+							<Text style={styles.text}>{getDayOfWeek(new Date(days[0].dt_txt.split(' ')[0]))}</Text>
 							<FlatList
 								horizontal
 								data={days}
@@ -249,9 +265,6 @@ const Weather2 = ({ route, navigation }) => {
 									var dt = new Date(day.item.dt * 1000);
 									return (
 										<View style={styles.hours}>
-											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
-												{dt.toISOString().split('T')[0]}
-											</Text>
 											<Text style={{ fontWeight: 'bold', color: '#346751' }}>
 												{dt.toISOString().split('T')[1].replace(':00.000Z', '')}
 											</Text>
