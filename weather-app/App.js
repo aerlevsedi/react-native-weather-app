@@ -24,6 +24,7 @@ function SearchStackScreen() {
 	return (
 		<Stack.Navigator>
 		 		<Stack.Screen
+					showLabel = 'false'
 					name="Weather"
 					component={Weather}
 					options={{
@@ -82,9 +83,9 @@ export default function App() {
 
         >
         <Tab.Screen name="Local Weather" component={LocalWeather} />
-		<Tab.Screen name="Search Weather" component={SearchStackScreen} />
+		<Tab.Screen name="Search Weather" options={{ headerShown: false }} component={SearchStackScreen} />
         <Tab.Screen name="Favorites" component={Weather} />
-      </Tab.Navigator>
+	  </Tab.Navigator>
 		</NavigationContainer>
 
 	);
