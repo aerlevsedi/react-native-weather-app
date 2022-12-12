@@ -26,6 +26,7 @@ const Weather = () => {
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
+	const [gpsGranted, setGpsGranted] = useState(false);
 	const weekDays = [
 		'Sunday',
 		'Monday',
@@ -59,6 +60,8 @@ const Weather = () => {
 		if (status !== 'granted') {
 			Alert.alert('Permission to access location was denied.');
 		}
+
+		setGpsGranted(status === 'granted');
 
 		location = await Location.getCurrentPositionAsync({
 			enableHighAccuracy: true,
@@ -120,7 +123,16 @@ const Weather = () => {
 		loadForecast();
 	}, []);
 
-	if (!forecast) {
+
+	if (!gpsGranted && !forecast) {
+		return (
+			<SafeAreaView >
+				<Text style={{ textAlign: 'center' }}>Nothing to show here without GPS on!</Text>
+				{/* <ActivityIndicator size='large' /> */}
+			</SafeAreaView>
+		);
+	}
+	else if (!forecast) {
 		return (
 			<SafeAreaView style={styles.loading}>
 				<Text style={{ textAlign: 'center' }}>Loading</Text>

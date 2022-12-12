@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TextInput, View, Keyboard, Button } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
-import { openWeatherKey } from ".";
+import { openWeatherKey } from "./Weather";
 
 let url = `http://api.openweathermap.org/geo/1.0/direct`;
 let mapBoxKey = `pk.eyJ1Ijoia2Fyb2xpbmE2MDYiLCJhIjoiY2xiM3Z5Mzk4MDRkNDN2cXNzOGhoZzZ1bCJ9.KT8tsfa44s4GqWUnfeu42Q`;
@@ -24,19 +24,19 @@ const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked, updateCi
 };
 
 
-  const searchForCity = async () => {
-    var response = await fetch(
-      `${url}?q=${searchPhrase}&limit=5&appid=${openWeatherKey}`
-		);
+  // const searchForCity = async () => {
+  //   var response = await fetch(
+  //     `${url}?q=${searchPhrase}&limit=5&appid=${openWeatherKey}`
+	// 	);
 
-    if (!response.ok) {
-      console.error("Cannot get geo coord based on city name!");
-    }else{
-      const hit = await response.json();
-      console.log("workin");
-      setHitol(hit.features);
-    }
-  };
+  //   if (!response.ok) {
+  //     console.error("Cannot get geo coord based on city name!");
+  //   }else{
+  //     const hit = await response.json();
+  //     console.log("workin");
+  //     setHitol(hit.features);
+  //   }
+  // };
 
   useEffect(() => {
     console.log({hitol1});
@@ -82,8 +82,9 @@ const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked, updateCi
       </View>
       {/* cancel button, depending on whether the search bar is clicked or not */}
       {clicked && (
-        <View>
+        <View style={styles.button}>
           <Button
+            color={'#C84B31'}
             title="Cancel"
             onPress={() => {
               Keyboard.dismiss();
@@ -100,7 +101,7 @@ export default SearchBar;
 // styles
 const styles = StyleSheet.create({
   container: {
-    margin: 15,
+    margin: 10,
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "row",
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchBar__clicked: {
+    marginTop: 30,
     padding: 10,
     flexDirection: "row",
     width: "80%",
@@ -127,5 +129,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 10,
     width: "90%",
+  },
+  button: {
+    marginTop: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 8,
+    // paddingHorizontal: 32,
+    borderRadius: 10,
+    elevation: 3,
+    backgroundColor: '#C84B31',
   },
 });
