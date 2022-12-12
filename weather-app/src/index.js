@@ -23,12 +23,20 @@ const LocalWeather = () => {
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
-	const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+	const weekDays = [
+		'Sunday',
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+	];
 
 	function getDayOfWeek(date)  {
 		var day = date.getDay();
-		if(day == new Date().getDay()) return 'Today'
-		else return days[day]
+		if (day == new Date().getDay()) return 'Today';
+		else return weekDays[day];
 	}
 
 	const loadForecast = async () => {
