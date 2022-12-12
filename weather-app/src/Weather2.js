@@ -18,10 +18,10 @@ import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import { url, url5days } from ".";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { url, url5days } from "./Weather";
+import { storeData, getData, getAllKeys, removeValue } from "../App";
 
-const Weather2 = ({ route, navigation }) => {
+const Weather2 = ({ route, navigation}) => {
   navigation = useNavigation();
   const { city } = route.params;
 
@@ -73,45 +73,6 @@ const Weather2 = ({ route, navigation }) => {
       });
   };
 
-  const storeData = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(city.text, jsonValue);
-    } catch (e) {
-      // saving error
-    }
-  };
-
-  const getData = async (key) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
-
-  const getAllKeys = async () => {
-    let keys = [];
-    try {
-      keys = await AsyncStorage.getAllKeys();
-      console.log({ keys });
-      return keys;
-    } catch (e) {
-      // read key error
-    }
-  };
-
-  const removeValue = async (key) => {
-    try {
-      await AsyncStorage.removeItem(key);
-    } catch (e) {
-      // remove error
-    }
-
-    console.log("Done.");
-  };
-
   const loadForecast = async () => {
     setRefreshing(true);
 
@@ -135,7 +96,6 @@ const Weather2 = ({ route, navigation }) => {
 
     const data = await response.json();
     const data5days = await response5days.json();
-    const k = data5days.list[0].weather;
 
     console.log("RESPONSE: " + JSON.stringify(data));
     console.log({ data5days });
@@ -215,7 +175,10 @@ const Weather2 = ({ route, navigation }) => {
         <Text style={styles.title}>Current Weather</Text>
 
         <Text style={styles.text}>
-          Location: {forecast.name}
+          Location: {city.text}, {forecast.name}
+		  
+
+
           {isFavouriteLocation ? (
             <AntDesign
               style={styles.icon}

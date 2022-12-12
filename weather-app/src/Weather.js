@@ -17,7 +17,7 @@ import List from './List';
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
-export const openWeatherKey = `86e4219117302e99c1870693b5d46e19`;
+export const openWeatherKey = `01eb218c1c36ecb20bfce9572410dffb`;
 export let url = `https://api.openweathermap.org/data/2.5/weather?units=metric&appid=${openWeatherKey}`;
 export let url5days = `https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=${openWeatherKey}`;
 
@@ -26,6 +26,7 @@ const Weather = () => {
 	const [forecast5DaysDivided, setForecast5DaysDivided] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [apiResponse, setApiResponse] = useState(null);
+	const [gpsGranted, setGpsGranted] = useState(false);
 	const weekDays = [
 		'Sunday',
 		'Monday',
@@ -59,6 +60,8 @@ const Weather = () => {
 		if (status !== 'granted') {
 			Alert.alert('Permission to access location was denied.');
 		}
+
+		setGpsGranted(status === 'granted');
 
 		location = await Location.getCurrentPositionAsync({
 			enableHighAccuracy: true,
@@ -120,7 +123,16 @@ const Weather = () => {
 		loadForecast();
 	}, []);
 
-	if (!forecast) {
+
+	if (!gpsGranted && !forecast) {
+		return (
+			<SafeAreaView >
+				<Text style={{ textAlign: 'center' }}>Nothing to show here without GPS on!</Text>
+				{/* <ActivityIndicator size='large' /> */}
+			</SafeAreaView>
+		);
+	}
+	else if (!forecast) {
 		return (
 			<SafeAreaView style={styles.loading}>
 				<Text style={{ textAlign: 'center' }}>Loading</Text>

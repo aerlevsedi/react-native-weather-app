@@ -11,14 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import {useNavigation} from '@react-navigation/native';
-
-// definition of the Item, which will be rendered in the FlatList
-const Item = ({ text, place_name }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{text}</Text>
-    <Text style={styles.details}>{place_name}</Text>
-  </View>
-);
+import { ScrollView } from "react-native";
 
 // the filter
 const List = ({ searchPhrase, setClicked, data, navigation }) => {
@@ -43,7 +36,7 @@ const List = ({ searchPhrase, setClicked, data, navigation }) => {
 
   return (
     <SafeAreaView style={styles.list__container}>
-      <View
+      <ScrollView
         onStartShouldSetResponder={() => {
           setClicked(false);
         }}
@@ -59,7 +52,7 @@ const List = ({ searchPhrase, setClicked, data, navigation }) => {
                     </Pressable>
         })}
 
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
