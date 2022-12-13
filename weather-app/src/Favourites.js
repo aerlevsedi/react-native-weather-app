@@ -6,7 +6,8 @@ import {
   SafeAreaView,
   Pressable,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  View
 } from "react-native";
 import {useNavigation} from '@react-navigation/native';
 import { getData, getAllKeys} from "../App";
@@ -27,7 +28,6 @@ const Favourites = ({ setClicked, data, navigation}) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
-
     setDataToRender([]);
     getAllKeys()
       .then((resp) => {
@@ -103,4 +103,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontStyle: "italic",
   },
+  text: {
+		fontSize: 16,
+		color: '#C84B31',
+		textAlign: 'center',
+	},
+  gpsMassage: {
+		justifyContent: 'center',
+		alignItems: 'center',
+    marginTop: 15,
+	},
 });
